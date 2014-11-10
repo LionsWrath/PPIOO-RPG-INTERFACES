@@ -19,6 +19,7 @@ public class Main extends JFrame {
     public static final int GAME_WIDTH = 960, GAME_HEIGHT = 600;
 
     public Main() {
+        sm = new StateManager(this);
         setSize(GAME_WIDTH,GAME_HEIGHT);
         setVisible(true);
         setResizable(false);
@@ -29,13 +30,22 @@ public class Main extends JFrame {
     }
     
     private void init() {
-        sm = new StateManager(this);
-        sm.setCurrentState("TeamMenu");
+        sm.setCurrentState("WelcomeMenu");
         sm.startCurrentState();
     }
     
     @Override
-    public void paint(Graphics g) {}
+    public void paint(Graphics g) {
+        System.out.println("TEste");
+        if(sm.checkCurrentState()) {
+            System.out.println("TEste");
+            if(sm.getCurrentState() == "WelcomeMenu") {
+                System.out.println("TEste");
+                sm.setCurrentState("TeamMenu");
+                sm.startCurrentState();
+            }
+        }
+    }
     
     
     public static void main(String[] args) {

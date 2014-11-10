@@ -48,7 +48,7 @@ public class WelcomeMenu extends State {
         g.drawImage(title, 40, 50, null);
         
         if(turner >= 200 && turner < 400) {
-            g.drawString("Clique Enter para jogar", 410, 400);
+            g.drawString("Aperte Enter para jogar", 410, 400);
             turner++;
         } else if( turner == 500) {
             turner = 0;
@@ -66,6 +66,7 @@ public class WelcomeMenu extends State {
         if(inputManager.isKeyPressed("Enter") || inputManager.isMousePressed("LeftClick")) {
             som.playSound("Choose");
             //Realizar a transicao para outro estado
+            this.ready = true;
         }
     }
     

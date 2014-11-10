@@ -7,11 +7,17 @@ package spritesheet;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import trabalhoppioo.Assassino;
+import trabalhoppioo.Game;
+import trabalhoppioo.Guardião;
+import trabalhoppioo.Guerreiro;
+import trabalhoppioo.Mago;
 
 /**
  *
@@ -20,6 +26,7 @@ import java.util.logging.Level;
 public class TeamMenu extends State {
     
     Graphics2D g = getGraphics2D();
+    Game game;
     Animator guerreiro;
     Animator mago;
     Animator assassino;
@@ -33,8 +40,10 @@ public class TeamMenu extends State {
         }
     };
 
-    public TeamMenu() {
+    public TeamMenu(Game game) {
         super("TeamMenu");
+        this.game = game;
+        
         //Sprites
         BufferedImageLoader loader = new BufferedImageLoader();
         BufferedImage guerreiroSprite = null;
@@ -166,6 +175,17 @@ public class TeamMenu extends State {
         g.drawString("OK", 863, 450);
         
         //Fazer loop para mostrar personagens ja adicionados
+        for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
+            if(game.player.getListaPersonagens().get(i) instanceof Guerreiro) {
+                g.drawImage(guerreiro.sprite, i*60 + 85, 380, 30, 62, null);
+            } else if(game.player.getListaPersonagens().get(i) instanceof Mago) {
+                g.drawImage(mago.sprite, i*60 + 85, 380, 28, 54, null);
+            } else if(game.player.getListaPersonagens().get(i) instanceof Assassino) {
+                g.drawImage(assassino.sprite, i*60 + 85, 380, 30, 70, null);
+            } else if(game.player.getListaPersonagens().get(i) instanceof Guardião) {
+                g.drawImage(guardiao.sprite, i*60 + 85, 380, 30, 70, null);
+            }
+        }
         
         //Atualizacao
         super.render();
@@ -175,35 +195,70 @@ public class TeamMenu extends State {
     public void update() {
         super.update();
         
-        if(inputManager.isMousePressed("LeftClick")) {
+        while(inputManager.isMousePressed("LeftClick")) {
             if((inputManager.MOUSE.x >= 69 && inputManager.MOUSE.x <= 130) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
-                som.playSound("Choose");
-                //AdicionarPersonagemGuerreiro
-                
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190) 
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.getIndex() <= 9) {
+                    som.playSound("Choose");
+                    game.adicionarGuerreiro("" + (game.getIndex()));
+                } else {
+                    som.playSound("Select");
+                }
+ 
             } else if((inputManager.MOUSE.x >= 334 && inputManager.MOUSE.x <= 395) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
-                som.playSound("Choose");
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190) 
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.getIndex() <= 9) {
+                    som.playSound("Choose");
+                    game.adicionarMago("" + (game.getIndex()));
+                } else {
+                    som.playSound("Select");
+                }
                 //AdicionarPersonagemMago
                 
             } else if((inputManager.MOUSE.x >= 584 && inputManager.MOUSE.x <= 645) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
-                som.playSound("Choose");
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.getIndex() <= 9) {
+                    som.playSound("Choose");
+                    game.adicionarAssassino("" + (game.getIndex()));
+                } else {
+                    som.playSound("Select");
+                }
                 //AdicionarPersonagemAssassino
                 
             } else if((inputManager.MOUSE.x >= 834 && inputManager.MOUSE.x <= 895) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
-                som.playSound("Choose");
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.getIndex() <= 9) {
+                    som.playSound("Choose");
+                    game.adicionarGuardião("" + (game.getIndex()));
+                } else {
+                    som.playSound("Select");
+                }
                 //AdicionarPersonagemGuardiao
                 
             }  else if((inputManager.MOUSE.x >= 830 && inputManager.MOUSE.x <= 911) 
-                    && (inputManager.MOUSE.y >= 380 && inputManager.MOUSE.y <= 410)) {
-                som.playSound("Choose");
+                    && (inputManager.MOUSE.y >= 380 && inputManager.MOUSE.y <= 410)
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.player.getListaPersonagens().size() != 0) {
+                    som.playSound("Choose");
+                    game.removerPersonagem();
                 //RemoverPersonagem
+                } else {
+                    som.playSound("Select");
+                }
                 
             }  else if((inputManager.MOUSE.x >= 830 && inputManager.MOUSE.x <= 911) 
-                    && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
-                som.playSound("Choose");
+                    && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)
+                    && !inputManager.isMousePressed("LeftClick")) {
+                if(game.player.getListaPersonagens().size() != 0) {
+                    som.playSound("Choose");
+                    this.ready = true;
+                } else {
+                    som.playSound("Select");
+                }
                 //Passar para o proximo estado - Verificar lista nula e etc
                 
             }

@@ -28,9 +28,12 @@ public class State extends Canvas implements Runnable {
     
     public String name;
     
+    public boolean ready;
+    
     public State(String s) {
         name = s;
         inputManager = new InputManager(this);
+        ready = false;
     }
     
     public void start() {

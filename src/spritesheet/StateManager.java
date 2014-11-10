@@ -7,6 +7,7 @@ package spritesheet;
 
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import trabalhoppioo.Game;
 
 /**
  *
@@ -27,8 +28,10 @@ public class StateManager {
 
     private void initAllStates() {
         //Adicionar estados criados aqui
+        Game game = new Game();
         states.add(new WelcomeMenu());
-        states.add(new TeamMenu());
+        states.add(new TeamMenu(game));
+        states.add(new IntroMenu());
         
     }
     
@@ -48,5 +51,13 @@ public class StateManager {
                currentState = i;
            }
        } 
+    }
+    
+    public boolean checkCurrentState() {
+        return states.get(currentState).ready;
+    }
+    
+    public String getCurrentState(){
+        return states.get(currentState).name;
     }
 }
