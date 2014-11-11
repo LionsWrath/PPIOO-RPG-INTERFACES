@@ -36,11 +36,11 @@ public class Main extends JFrame {
     @Override
     public void paint(Graphics g) {
         System.out.println("Teste: " + sm.check());
-        if("WelcomeMenu".equals(sm.getCurrentState())) {
+        /*if("WelcomeMenu".equals(sm.getCurrentState())) {
             sm.stopCurrentState();
             sm.setCurrentState("TeamMenu");
             sm.startCurrentState();
-        }
+        }*/
     }
     
     

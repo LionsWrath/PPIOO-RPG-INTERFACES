@@ -12,12 +12,15 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import trabalhoppioo.Assassino;
+import trabalhoppioo.Body;
 import trabalhoppioo.Game;
 import trabalhoppioo.Guardião;
 import trabalhoppioo.Guerreiro;
 import trabalhoppioo.Mago;
+import trabalhoppioo.Personagem;
 
 /**
  *
@@ -34,6 +37,7 @@ public class FightMenu extends State {
     public int playerPer;
     public int computerPer;
     public int turn;
+    public int target;
     SoundManager som = new SoundManager() {
 
         @Override
@@ -56,6 +60,7 @@ public class FightMenu extends State {
         playerPer = 0;
         computerPer = 0;
         turn = 0;
+        target = -1;
         
         //Inputs
         inputManager.addMouseMapping("LeftClick", MouseEvent.BUTTON1);
@@ -134,22 +139,40 @@ public class FightMenu extends State {
         
         game.adicionarAssassino("0");
         game.adicionarGuardião("1");
-        game.atacarPersonagem(0, 1);
         game.adicionarMago("2");
         game.adicionarGuerreiro("3");
-        game.randomizeAction(0);
         game.adicionarGuardião("4");
         game.adicionarGuerreiro("5");
         game.adicionarMago("6");
         game.adicionarGuerreiro("7");
-        game.randomizeAction(0);
         game.adicionarGuardião("8");
         game.adicionarAssassino("9");
+    }
+    
+    public void nextTurn() {
+        switch (turn) {
+            case 0:
+                if (playerPer == game.player.getListaPersonagens().size()-1) {
+                    playerPer = 0; 
+                } else {
+                    playerPer++;
+                }
+                turn = 1;
+                break;
+            case 1:
+                if (computerPer == game.computer.getListaPersonagens().size()-1) {
+                    computerPer = 0; 
+                } else {
+                    computerPer++;
+                }
+                turn = 0;
+        }
     }
     
     @Override
     public void render() {
         g = getGraphics2D();
+        Random randomGenerator = new Random();
         //Tela aqui
         g.setColor(Color.WHITE);
         g.drawRect(20, 25, 910, 350);
@@ -188,20 +211,48 @@ public class FightMenu extends State {
         
         g.setColor(Color.WHITE);
         for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
-            g.drawString(game.player.getListaPersonagens().get(i).getQuantidadeVida() + "/" + game.player.getListaPersonagens().get(i).getMaxvida(), 55,i*30 + 60);
+            if(game.player.getListaPersonagens().get(i).getQuantidadeVida() >= game.player.getListaPersonagens().get(i).getMaxvida()){
+                g.setColor(Color.GREEN);
+            } else if (game.player.getListaPersonagens().get(i).getQuantidadeVida() >= game.player.getListaPersonagens().get(i).getMaxvida()*0.7) {
+                g.setColor(Color.WHITE);
+            } else if (game.player.getListaPersonagens().get(i).getQuantidadeVida() >= game.player.getListaPersonagens().get(i).getMaxvida()*0.5) {
+                g.setColor(Color.YELLOW);
+            } else if (game.player.getListaPersonagens().get(i).getQuantidadeVida() < game.player.getListaPersonagens().get(i).getMaxvida()*0.3) {
+                g.setColor(Color.RED);
+            }
+            g.drawString("" + game.player.getListaPersonagens().get(i).getQuantidadeVida(), 55, i*30 + 60);
+            g.setColor(Color.WHITE);
+            g.drawString("/" + game.player.getListaPersonagens().get(i).getMaxvida(), 80,i*30 + 60);
+            
             if(game.player.getListaPersonagens().get(i) instanceof Guerreiro) {
                 g.drawImage(guerreiro.sprite, 180, i*30 + 40, 15, 31, null);
+                guerreiro.update(System.currentTimeMillis());
             } else if(game.player.getListaPersonagens().get(i) instanceof Mago) {
                 g.drawImage(mago.sprite, 180, i*30 + 40, 14, 27, null);
+                mago.update(System.currentTimeMillis());
             } else if(game.player.getListaPersonagens().get(i) instanceof Assassino) {
                 g.drawImage(assassino.sprite, 180, i*30 + 40, 15, 35, null);
+                assassino.update(System.currentTimeMillis());
             } else if(game.player.getListaPersonagens().get(i) instanceof Guardião) {
                 g.drawImage(guardiao.sprite, 180, i*30 + 40, 15, 35, null);
+                guardiao.update(System.currentTimeMillis());
             }
         }
         
         for(int i = 0; i < game.computer.getListaPersonagens().size(); i++) {
-            g.drawString(game.computer.getListaPersonagens().get(i).getQuantidadeVida() + "/" + game.computer.getListaPersonagens().get(i).getMaxvida(), 845,i*30 + 60);
+            if(game.computer.getListaPersonagens().get(i).getQuantidadeVida() >= game.computer.getListaPersonagens().get(i).getMaxvida()){
+                g.setColor(Color.GREEN);
+            } else if (game.computer.getListaPersonagens().get(i).getQuantidadeVida() >= game.computer.getListaPersonagens().get(i).getMaxvida()*0.7) {
+                g.setColor(Color.WHITE);
+            } else if (game.computer.getListaPersonagens().get(i).getQuantidadeVida() >= game.computer.getListaPersonagens().get(i).getMaxvida()*0.5) {
+                g.setColor(Color.YELLOW);
+            } else if (game.computer.getListaPersonagens().get(i).getQuantidadeVida() < game.computer.getListaPersonagens().get(i).getMaxvida()*0.3) {
+                g.setColor(Color.RED);
+            }
+            g.drawString("" + game.computer.getListaPersonagens().get(i).getQuantidadeVida(), 845, i*30 + 60);
+            g.setColor(Color.WHITE);
+            g.drawString("/" + game.computer.getListaPersonagens().get(i).getMaxvida(), 870,i*30 + 60);
+            
             if(game.computer.getListaPersonagens().get(i) instanceof Guerreiro) {
                 g.drawImage(guerreiro.sprite, 760, i*30 + 40, 15, 31, null);
                 guerreiro.update(System.currentTimeMillis());
@@ -217,6 +268,93 @@ public class FightMenu extends State {
             }
         }
         
+        if (turn == 0) {
+            g.fillArc(170, playerPer*30 +  50, 15, 15, 135, 90);
+        } else {
+            g.fillArc(770, computerPer*30 + 50, 15, 15, 315, 90);
+        }
+        
+        //realiazador de ataques
+        if(turn == 0 && option == 1 && target != -1) {
+            //Verificar defesa
+            int randomNum = randomGenerator.nextInt(100);
+            if (randomNum > 25 && randomNum <=50) {
+                game.computer.getListaPersonagens().get(target).defender();
+                som.playSound("Hit_Def");
+            } else {
+                som.playSound("Hit");
+            }
+            //
+            game.atacarPersonagem(playerPer, target);
+            if (game.player.getListaPersonagens().get(target).getQuantidadeVida() == 0) {
+                    game.removerMortoPlayer(target);
+                    this.computerPer--;
+            }
+            option = 0;
+            target = -1;
+            nextTurn();
+                
+        } else if(turn == 0 && option == 2 && target != -1) {
+            if(game.player.getListaPersonagens().get(playerPer) instanceof Body) {
+                som.playSound("Buff");
+                game.conjurarPersonagem(playerPer);
+                target = -1;
+            } else {
+                som.playSound("Heal");
+                game.curarPersonagem(playerPer, target);
+                target = -1;
+                    
+            }
+            option = 0;
+            nextTurn();
+        } else if(turn == 1) { 
+            option = randomGenerator.nextInt(2);
+            if(option == 1) {
+                //Botar a IA aqui - definir target
+                int menor = 0;
+                for(int i = 0; i < game.player.getListaPersonagens().size(); i++){
+                    if(game.player.getListaPersonagens().get(i).getQuantidadeVida() < game.player.getListaPersonagens().get(menor).getQuantidadeVida()) {
+                        menor = i;
+                    }
+                }
+                //Verificar Defesa
+                int randomNum = randomGenerator.nextInt(100);
+                if (randomNum > 25 && randomNum <=50) {
+                    game.player.getListaPersonagens().get(menor).defender();
+                    som.playSound("Hit_Def");
+                    som.playSound("Hit");
+                }
+                //
+                game.atacarPersonagemComputer(computerPer, menor);
+                if (game.player.getListaPersonagens().get(menor).getQuantidadeVida() == 0) {
+                    game.removerMortoPlayer(menor);
+                    playerPer--;
+                }
+                option = 0;
+                nextTurn();
+                
+            } else if(turn == 1 && option == 2) {
+                if(game.computer.getListaPersonagens().get(computerPer) instanceof Body) {
+                    som.playSound("Buff");
+                    game.conjurarPersonagemComputer(computerPer);
+                } else {
+                    //Botar a IA aqui
+                    int menor = 0;
+                    for(int i = 0; i < game.player.getListaPersonagens().size(); i++){
+                    if((game.player.getListaPersonagens().get(i).getQuantidadeVida()/game.player.getListaPersonagens().get(i).getMaxvida())
+                            < (game.player.getListaPersonagens().get(menor).getQuantidadeVida()/game.player.getListaPersonagens().get(menor).getMaxvida())) {
+                        menor = i;
+                    }
+                }
+                    //
+                    som.playSound("Heal");
+                    game.curarPersonagemComputer(computerPer, menor);
+                    
+                }
+                option = 0;
+                nextTurn();
+            }
+        }
         //Atualizacao
         super.render();
     }
@@ -225,38 +363,62 @@ public class FightMenu extends State {
     public void update() {
         super.update();
         
-        if(inputManager.isMouseClicked("LeftClick")) {
+        if(inputManager.isMouseClicked("LeftClick") && turn == 0) {
             switch (option) {
                 case 0:
                     if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
                             && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
-                        som.playSound("Choose");
                         option = 1;
+                        som.playSound("Choose");
                 
                     } else if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
                             && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) {
-                        som.playSound("Choose");
-                        option = 2;
+                            option = 2;
+                        if(game.player.getListaPersonagens().get(playerPer) instanceof Body) {
+                            target = 0;
+                        } else {
+                            som.playSound("Choose");
+                        }
                     }
                     break;
                 case 1:
+                        //Volta botao
                     if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
                             && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
                         som.playSound("Select");
                         option = 0;
                     } else {
+                        //Seleciona o alvo
                         for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
                             if ((inputManager.MOUSE.x >= 760 && inputManager.MOUSE.x <= 775) 
                             && (inputManager.MOUSE.y >= (i*30 + 40) && inputManager.MOUSE.y <= (i*30 + 75))) {
-                                som.playSound("Select");
+                                target = i;
                             }
                         }
                     }
                     break;
                 case 2:
-                    
+                        //Volta botao
+                    if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
+                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) {
+                        som.playSound("Select");
+                        option = 0;
+                    } else {
+                        //Seleciona o alvo
+                        for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
+                            if ((inputManager.MOUSE.x >= 180 && inputManager.MOUSE.x <= 195) 
+                                    && (inputManager.MOUSE.y >= (i*30 + 40) && inputManager.MOUSE.y <= (i*30 + 75))) {
+                                //Verificar vida cheia e mesmo personagem
+                                if(playerPer != i) {
+                                    target = i;
+                                } else {
+                                    som.playSound("Select");
+                                }
+                            }
+                        }
+                    }
                     break;
-            }
-        }
+            } 
+        } 
     }
 }
