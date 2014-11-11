@@ -14,12 +14,11 @@ import javax.swing.JFrame;
  */
 public class Main extends JFrame {
 
-    StateManager sm;
+    public StateManager sm = new StateManager(this);
     
     public static final int GAME_WIDTH = 960, GAME_HEIGHT = 600;
 
     public Main() {
-        sm = new StateManager(this);
         setSize(GAME_WIDTH,GAME_HEIGHT);
         setVisible(true);
         setResizable(false);
@@ -30,20 +29,17 @@ public class Main extends JFrame {
     }
     
     private void init() {
-        sm.setCurrentState("WelcomeMenu");
+        sm.setCurrentState("FightMenu");
         sm.startCurrentState();
     }
     
     @Override
     public void paint(Graphics g) {
-        System.out.println("TEste");
-        if(sm.checkCurrentState()) {
-            System.out.println("TEste");
-            if(sm.getCurrentState() == "WelcomeMenu") {
-                System.out.println("TEste");
-                sm.setCurrentState("TeamMenu");
-                sm.startCurrentState();
-            }
+        System.out.println("Teste: " + sm.check());
+        if("WelcomeMenu".equals(sm.getCurrentState())) {
+            sm.stopCurrentState();
+            sm.setCurrentState("TeamMenu");
+            sm.startCurrentState();
         }
     }
     

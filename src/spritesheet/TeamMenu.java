@@ -7,12 +7,12 @@ package spritesheet;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import javax.swing.JFrame;
 import trabalhoppioo.Assassino;
 import trabalhoppioo.Game;
 import trabalhoppioo.Guardião;
@@ -39,10 +39,15 @@ public class TeamMenu extends State {
             sounds.add(new Sound("Select", Sound.getURL("Select.wav")));
         }
     };
+    
+    JFrame frame;
+    public boolean ready;
 
-    public TeamMenu(Game game) {
+    public TeamMenu(Game game, JFrame frame) {
         super("TeamMenu");
         this.game = game;
+        this.frame = frame;
+        this.ready = false;
         
         //Sprites
         BufferedImageLoader loader = new BufferedImageLoader();
@@ -195,10 +200,9 @@ public class TeamMenu extends State {
     public void update() {
         super.update();
         
-        while(inputManager.isMousePressed("LeftClick")) {
+        while(inputManager.isMouseClicked("LeftClick")) {
             if((inputManager.MOUSE.x >= 69 && inputManager.MOUSE.x <= 130) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190) 
-                    && !inputManager.isMousePressed("LeftClick")) {
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
                 if(game.getIndex() <= 9) {
                     som.playSound("Choose");
                     game.adicionarGuerreiro("" + (game.getIndex()));
@@ -207,8 +211,7 @@ public class TeamMenu extends State {
                 }
  
             } else if((inputManager.MOUSE.x >= 334 && inputManager.MOUSE.x <= 395) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190) 
-                    && !inputManager.isMousePressed("LeftClick")) {
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
                 if(game.getIndex() <= 9) {
                     som.playSound("Choose");
                     game.adicionarMago("" + (game.getIndex()));
@@ -218,8 +221,7 @@ public class TeamMenu extends State {
                 //AdicionarPersonagemMago
                 
             } else if((inputManager.MOUSE.x >= 584 && inputManager.MOUSE.x <= 645) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)
-                    && !inputManager.isMousePressed("LeftClick")) {
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
                 if(game.getIndex() <= 9) {
                     som.playSound("Choose");
                     game.adicionarAssassino("" + (game.getIndex()));
@@ -229,8 +231,7 @@ public class TeamMenu extends State {
                 //AdicionarPersonagemAssassino
                 
             } else if((inputManager.MOUSE.x >= 834 && inputManager.MOUSE.x <= 895) 
-                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)
-                    && !inputManager.isMousePressed("LeftClick")) {
+                    && (inputManager.MOUSE.y >= 170 && inputManager.MOUSE.y <= 190)) {
                 if(game.getIndex() <= 9) {
                     som.playSound("Choose");
                     game.adicionarGuardião("" + (game.getIndex()));
@@ -240,9 +241,8 @@ public class TeamMenu extends State {
                 //AdicionarPersonagemGuardiao
                 
             }  else if((inputManager.MOUSE.x >= 830 && inputManager.MOUSE.x <= 911) 
-                    && (inputManager.MOUSE.y >= 380 && inputManager.MOUSE.y <= 410)
-                    && !inputManager.isMousePressed("LeftClick")) {
-                if(game.player.getListaPersonagens().size() != 0) {
+                    && (inputManager.MOUSE.y >= 380 && inputManager.MOUSE.y <= 410)) {
+                if(!game.player.getListaPersonagens().isEmpty()) {
                     som.playSound("Choose");
                     game.removerPersonagem();
                 //RemoverPersonagem
@@ -251,11 +251,11 @@ public class TeamMenu extends State {
                 }
                 
             }  else if((inputManager.MOUSE.x >= 830 && inputManager.MOUSE.x <= 911) 
-                    && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)
-                    && !inputManager.isMousePressed("LeftClick")) {
-                if(game.player.getListaPersonagens().size() != 0) {
+                    && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
+                if(!game.player.getListaPersonagens().isEmpty()) {
                     som.playSound("Choose");
-                    this.ready = true;
+                    //this.ready = true;
+                    //frame.paint(g);
                 } else {
                     som.playSound("Select");
                 }

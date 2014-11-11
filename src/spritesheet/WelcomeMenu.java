@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.Graphics2D;
 import Resources.ResourceLoader;
 import java.awt.Image;
+import javax.swing.JFrame;
 
 /**
  *
@@ -29,10 +30,12 @@ public class WelcomeMenu extends State {
     };
     
     private int turner = 0;
-    
+    JFrame frame;
 
-    public WelcomeMenu() {
+    public WelcomeMenu(JFrame frame) {
         super("WelcomeMenu");
+        this.frame = frame;
+        this.ready = false;
         inputManager.addMouseMapping("LeftClick", MouseEvent.BUTTON1);
         inputManager.addKeyMapping("Enter", KeyEvent.VK_ENTER);
     }
@@ -66,8 +69,9 @@ public class WelcomeMenu extends State {
         if(inputManager.isKeyPressed("Enter") || inputManager.isMousePressed("LeftClick")) {
             som.playSound("Choose");
             //Realizar a transicao para outro estado
-            this.ready = true;
+            frame.paint(g);
         }
     }
     
 }
+

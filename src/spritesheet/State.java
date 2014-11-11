@@ -84,8 +84,8 @@ public class State extends Canvas implements Runnable {
     @Override
     public void run(){
         while(running) {
-            update();
             render();
+            update();
         }
     }
     

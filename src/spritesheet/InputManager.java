@@ -64,7 +64,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
         public void toogleClicked(boolean toogle){
             if(clicked != toogle) {
                 clicked = toogle;
-            }
+            } 
             if(clicked) {
                 clickCount++;
             }

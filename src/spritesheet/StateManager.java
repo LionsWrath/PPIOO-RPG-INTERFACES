@@ -29,9 +29,9 @@ public class StateManager {
     private void initAllStates() {
         //Adicionar estados criados aqui
         Game game = new Game();
-        states.add(new WelcomeMenu());
-        states.add(new TeamMenu(game));
-        states.add(new IntroMenu());
+        states.add(new WelcomeMenu(gameFrame));
+        states.add(new TeamMenu(game, gameFrame));
+        states.add(new FightMenu(game));
         
     }
     
@@ -53,11 +53,11 @@ public class StateManager {
        } 
     }
     
-    public boolean checkCurrentState() {
-        return states.get(currentState).ready;
-    }
-    
     public String getCurrentState(){
         return states.get(currentState).name;
+    }
+    
+    public boolean check(){
+        return states.get(currentState).ready;
     }
 }
