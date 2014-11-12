@@ -31,7 +31,8 @@ public class StateManager {
         Game game = new Game();
         states.add(new WelcomeMenu(gameFrame));
         states.add(new TeamMenu(game, gameFrame));
-        states.add(new FightMenu(game));
+        states.add(new FightMenu(game, gameFrame));
+        states.add(new EndMenu(game));
         
     }
     
@@ -55,6 +56,10 @@ public class StateManager {
     
     public String getCurrentState(){
         return states.get(currentState).name;
+    }
+    
+    public int getCurrentStateNumber(){
+        return currentState;
     }
     
     public boolean check(){

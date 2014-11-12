@@ -5,7 +5,6 @@
  */
 package spritesheet;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.Graphics2D;
 import Resources.ResourceLoader;
@@ -25,7 +24,7 @@ public class WelcomeMenu extends State {
 
         @Override
         public void initSounds() {
-            sounds.add(new Sound("Choose", Sound.getURL("Pickup_Coin.wav")));
+            sounds.add(new Sound("Choose", Sound.getURL("COIN.wav")));
         }
     };
     
@@ -35,9 +34,7 @@ public class WelcomeMenu extends State {
     public WelcomeMenu(JFrame frame) {
         super("WelcomeMenu");
         this.frame = frame;
-        this.ready = false;
         inputManager.addMouseMapping("LeftClick", MouseEvent.BUTTON1);
-        inputManager.addKeyMapping("Enter", KeyEvent.VK_ENTER);
     }
     
     @Override
@@ -51,7 +48,7 @@ public class WelcomeMenu extends State {
         g.drawImage(title, 40, 50, null);
         
         if(turner >= 200 && turner < 400) {
-            g.drawString("Aperte Enter para jogar", 410, 400);
+            g.drawString("Clique para jogar", 425, 400);
             turner++;
         } else if( turner == 500) {
             turner = 0;
@@ -66,9 +63,10 @@ public class WelcomeMenu extends State {
     @Override
     public void update() {
         super.update();
-        if(inputManager.isKeyPressed("Enter") || inputManager.isMousePressed("LeftClick")) {
+        if(inputManager.isMouseClicked("LeftClick")) {
             som.playSound("Choose");
             //Realizar a transicao para outro estado
+            ready = true;
             frame.paint(g);
         }
     }

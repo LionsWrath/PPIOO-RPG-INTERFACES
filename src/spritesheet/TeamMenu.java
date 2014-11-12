@@ -41,13 +41,11 @@ public class TeamMenu extends State {
     };
     
     JFrame frame;
-    public boolean ready;
 
     public TeamMenu(Game game, JFrame frame) {
         super("TeamMenu");
         this.game = game;
         this.frame = frame;
-        this.ready = false;
         
         //Sprites
         BufferedImageLoader loader = new BufferedImageLoader();
@@ -254,8 +252,8 @@ public class TeamMenu extends State {
                     && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
                 if(!game.player.getListaPersonagens().isEmpty()) {
                     som.playSound("Choose");
-                    //this.ready = true;
-                    //frame.paint(g);
+                    ready = true;
+                    frame.paint(g);
                 } else {
                     som.playSound("Select");
                 }

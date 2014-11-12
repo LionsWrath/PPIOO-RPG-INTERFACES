@@ -5,8 +5,10 @@
  */
 package spritesheet;
 
+import Resources.ResourceLoader;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -14,13 +16,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 import trabalhoppioo.Assassino;
 import trabalhoppioo.Body;
 import trabalhoppioo.Game;
 import trabalhoppioo.Guardião;
 import trabalhoppioo.Guerreiro;
 import trabalhoppioo.Mago;
-import trabalhoppioo.Personagem;
 
 /**
  *
@@ -29,6 +32,7 @@ import trabalhoppioo.Personagem;
 public class FightMenu extends State {
 
     Graphics2D g = getGraphics2D();
+    Image bg = ResourceLoader.getImage("backtuts.jpg");
     Game game;
     Animator guerreiro;
     Animator mago;
@@ -38,6 +42,7 @@ public class FightMenu extends State {
     public int computerPer;
     public int turn;
     public int target;
+    JFrame frame;
     SoundManager som = new SoundManager() {
 
         @Override
@@ -53,7 +58,7 @@ public class FightMenu extends State {
     
     private int option;
     
-    public FightMenu(Game game) {
+    public FightMenu(Game game, JFrame frame) {
         super("FightMenu");
         this.game = game;
         option = 0;
@@ -61,11 +66,16 @@ public class FightMenu extends State {
         computerPer = 0;
         turn = 0;
         target = -1;
+        this.frame = frame;
         
         //Inputs
         inputManager.addMouseMapping("LeftClick", MouseEvent.BUTTON1);
         inputManager.addKeyMapping("Up", KeyEvent.VK_UP);
         inputManager.addKeyMapping("Down", KeyEvent.VK_DOWN);
+        inputManager.addKeyMapping("a", KeyEvent.VK_A);
+        inputManager.addKeyMapping("s", KeyEvent.VK_S);
+        inputManager.addKeyMapping("d", KeyEvent.VK_D);
+        
         
         //SpriteSheet
         BufferedImageLoader loader = new BufferedImageLoader();
@@ -136,23 +146,12 @@ public class FightMenu extends State {
         guardiao = new Animator(spriteGuardiao);
         guardiao.setSpeed(150);
         guardiao.play();
-        
-        game.adicionarAssassino("0");
-        game.adicionarGuardião("1");
-        game.adicionarMago("2");
-        game.adicionarGuerreiro("3");
-        game.adicionarGuardião("4");
-        game.adicionarGuerreiro("5");
-        game.adicionarMago("6");
-        game.adicionarGuerreiro("7");
-        game.adicionarGuardião("8");
-        game.adicionarAssassino("9");
     }
     
     public void nextTurn() {
         switch (turn) {
             case 0:
-                if (playerPer == game.player.getListaPersonagens().size()-1) {
+                if (playerPer >= game.player.getListaPersonagens().size()-1) {
                     playerPer = 0; 
                 } else {
                     playerPer++;
@@ -160,7 +159,7 @@ public class FightMenu extends State {
                 turn = 1;
                 break;
             case 1:
-                if (computerPer == game.computer.getListaPersonagens().size()-1) {
+                if (computerPer >= game.computer.getListaPersonagens().size()-1) {
                     computerPer = 0; 
                 } else {
                     computerPer++;
@@ -180,6 +179,7 @@ public class FightMenu extends State {
         g.drawRect(810, 25, 120, 350);
         g.drawRect(20, 400, 910, 140);
         g.drawRect(20, 400, 240, 140);
+        g.drawImage(bg, 141, 26, 669, 349, null);
         
         g.fillRect(80, 430, 120, 30);
         g.fillRect(80, 480, 120, 30);
@@ -268,11 +268,11 @@ public class FightMenu extends State {
             }
         }
         
-        if (turn == 0) {
+        //if (turn == 0) {
             g.fillArc(170, playerPer*30 +  50, 15, 15, 135, 90);
-        } else {
+        //} else {
             g.fillArc(770, computerPer*30 + 50, 15, 15, 315, 90);
-        }
+        //}
         
         //realiazador de ataques
         if(turn == 0 && option == 1 && target != -1) {
@@ -286,9 +286,11 @@ public class FightMenu extends State {
             }
             //
             game.atacarPersonagem(playerPer, target);
-            if (game.player.getListaPersonagens().get(target).getQuantidadeVida() == 0) {
-                    game.removerMortoPlayer(target);
-                    this.computerPer--;
+            if (game.computer.getListaPersonagens().get(target).getQuantidadeVida() == 0) { 
+                    game.removerMortoComputer(target);
+                    if(computerPer != 0){
+                        computerPer--;
+                    }
             }
             option = 0;
             target = -1;
@@ -328,7 +330,9 @@ public class FightMenu extends State {
                 game.atacarPersonagemComputer(computerPer, menor);
                 if (game.player.getListaPersonagens().get(menor).getQuantidadeVida() == 0) {
                     game.removerMortoPlayer(menor);
-                    playerPer--;
+                    if(playerPer != 0) {
+                        playerPer--;
+                    }
                 }
                 option = 0;
                 nextTurn();
@@ -341,9 +345,9 @@ public class FightMenu extends State {
                     //Botar a IA aqui
                     int menor = 0;
                     for(int i = 0; i < game.player.getListaPersonagens().size(); i++){
-                    if((game.player.getListaPersonagens().get(i).getQuantidadeVida()/game.player.getListaPersonagens().get(i).getMaxvida())
+                        if((game.player.getListaPersonagens().get(i).getQuantidadeVida()/game.player.getListaPersonagens().get(i).getMaxvida())
                             < (game.player.getListaPersonagens().get(menor).getQuantidadeVida()/game.player.getListaPersonagens().get(menor).getMaxvida())) {
-                        menor = i;
+                            menor = i;
                     }
                 }
                     //
@@ -362,17 +366,23 @@ public class FightMenu extends State {
     @Override
     public void update() {
         super.update();
+        //Verificacao de vitoria
+        if(game.player.getListaPersonagens().isEmpty() || game.computer.getListaPersonagens().isEmpty()) {
+            ready = true;
+            frame.update(g);
+        }
         
-        if(inputManager.isMouseClicked("LeftClick") && turn == 0) {
+        if((inputManager.isMouseClicked("LeftClick") || inputManager.isKeyPressed("a") || inputManager.isKeyPressed("s")) || inputManager.isKeyPressed("d") 
+                && turn == 0) {
             switch (option) {
                 case 0:
-                    if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
+                    if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
+                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) || inputManager.isKeyPressed("a")) {
                         option = 1;
                         som.playSound("Choose");
                 
-                    } else if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) {
+                    } else if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
+                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) || inputManager.isKeyPressed("d")) {
                             option = 2;
                         if(game.player.getListaPersonagens().get(playerPer) instanceof Body) {
                             target = 0;
@@ -383,8 +393,8 @@ public class FightMenu extends State {
                     break;
                 case 1:
                         //Volta botao
-                    if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) {
+                    if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
+                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) || inputManager.isKeyPressed("s")) {
                         som.playSound("Select");
                         option = 0;
                     } else {
@@ -392,6 +402,7 @@ public class FightMenu extends State {
                         for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
                             if ((inputManager.MOUSE.x >= 760 && inputManager.MOUSE.x <= 775) 
                             && (inputManager.MOUSE.y >= (i*30 + 40) && inputManager.MOUSE.y <= (i*30 + 75))) {
+                                System.out.println("" + i);
                                 target = i;
                             }
                         }
@@ -399,8 +410,8 @@ public class FightMenu extends State {
                     break;
                 case 2:
                         //Volta botao
-                    if((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) {
+                    if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
+                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) || inputManager.isKeyPressed("s")) {
                         som.playSound("Select");
                         option = 0;
                     } else {

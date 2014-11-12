@@ -29,18 +29,30 @@ public class Main extends JFrame {
     }
     
     private void init() {
-        sm.setCurrentState("FightMenu");
+        sm.setCurrentState("WelcomeMenu");
         sm.startCurrentState();
     }
     
     @Override
     public void paint(Graphics g) {
         System.out.println("Teste: " + sm.check());
-        /*if("WelcomeMenu".equals(sm.getCurrentState())) {
+        if("WelcomeMenu".equals(sm.getCurrentState()) && sm.check()) {
             sm.stopCurrentState();
             sm.setCurrentState("TeamMenu");
             sm.startCurrentState();
-        }*/
+            setVisible(true);
+        } else if("TeamMenu".equals(sm.getCurrentState()) && sm.check()) {
+            sm.stopCurrentState();
+            sm.setCurrentState("FightMenu");
+            sm.startCurrentState();
+            setVisible(true);
+        } else if("FightMenu".equals(sm.getCurrentState()) && sm.check()) {
+            sm.stopCurrentState();
+            sm.setCurrentState("EndMenu");
+            sm.startCurrentState();
+            setVisible(true);
+        }
+        
     }
     
     
