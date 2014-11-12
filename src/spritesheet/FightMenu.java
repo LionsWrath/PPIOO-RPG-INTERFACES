@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import trabalhoppioo.Assassino;
 import trabalhoppioo.Body;
@@ -42,6 +41,12 @@ public class FightMenu extends State {
     public int computerPer;
     public int turn;
     public int target;
+    
+    //Comeco do log
+    String logPlayer = "";
+    String logComputer = "";
+    //
+    
     JFrame frame;
     SoundManager som = new SoundManager() {
 
@@ -73,8 +78,6 @@ public class FightMenu extends State {
         inputManager.addKeyMapping("Up", KeyEvent.VK_UP);
         inputManager.addKeyMapping("Down", KeyEvent.VK_DOWN);
         inputManager.addKeyMapping("a", KeyEvent.VK_A);
-        inputManager.addKeyMapping("s", KeyEvent.VK_S);
-        inputManager.addKeyMapping("d", KeyEvent.VK_D);
         
         
         //SpriteSheet
@@ -205,7 +208,8 @@ public class FightMenu extends State {
                 g.setColor(Color.LIGHT_GRAY);
                 g.drawString("Conjurar", 115, 500);
                 g.setColor(Color.WHITE);
-                g.drawString("> Escolha o personagem do time adversario que quer atacar", 280, 450);
+                logPlayer = "> Escolha o personagem do time adversario que quer atacar";
+                logComputer = "";
                 break;
             case 2:
                 //Verificar instancias
@@ -214,12 +218,14 @@ public class FightMenu extends State {
                 g.setColor(Color.BLUE);
                 g.drawString("Conjurar", 115, 500);
                 g.setColor(Color.WHITE);
-                g.drawString("> Escolha o personagem do seu time que quer curar", 280, 450);
+                logPlayer = "> Escolha o personagem do seu time que quer curar";
+                logComputer = "";
                 
         }
         
         g.setColor(Color.WHITE);
         for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
+            g.drawString(i + "- ", 40, i*30 + 60);
             if(game.player.getListaPersonagens().get(i).getQuantidadeVida() >= game.player.getListaPersonagens().get(i).getMaxvida()){
                 g.setColor(Color.GREEN);
             } else if (game.player.getListaPersonagens().get(i).getQuantidadeVida() >= game.player.getListaPersonagens().get(i).getMaxvida()*0.7) {
@@ -229,6 +235,7 @@ public class FightMenu extends State {
             } else if (game.player.getListaPersonagens().get(i).getQuantidadeVida() < game.player.getListaPersonagens().get(i).getMaxvida()*0.3) {
                 g.setColor(Color.RED);
             }
+            
             g.drawString("" + game.player.getListaPersonagens().get(i).getQuantidadeVida(), 55, i*30 + 60);
             g.setColor(Color.WHITE);
             g.drawString("/" + game.player.getListaPersonagens().get(i).getMaxvida(), 80,i*30 + 60);
@@ -249,6 +256,7 @@ public class FightMenu extends State {
         }
         
         for(int i = 0; i < game.computer.getListaPersonagens().size(); i++) {
+            g.drawString(i + "- ", 830, i*30 + 60);
             if(game.computer.getListaPersonagens().get(i).getQuantidadeVida() >= game.computer.getListaPersonagens().get(i).getMaxvida()){
                 g.setColor(Color.GREEN);
             } else if (game.computer.getListaPersonagens().get(i).getQuantidadeVida() >= game.computer.getListaPersonagens().get(i).getMaxvida()*0.7) {
@@ -277,42 +285,51 @@ public class FightMenu extends State {
             }
         }
         
-        //if (turn == 0) {
-            g.fillArc(170, playerPer*30 +  50, 15, 15, 135, 90);
-        //} else {
-            g.fillArc(770, computerPer*30 + 50, 15, 15, 315, 90);
-        //}
+        g.fillArc(170, playerPer*30 +  50, 15, 15, 135, 90);
+        g.fillArc(770, computerPer*30 + 50, 15, 15, 315, 90);
+            
         verificar();
-        //realiazador de ataques
+        //realizador de ataques
         if(turn == 0 && option == 1 && target != -1) {
             //Verificar defesa
+            logPlayer = "Player: ";
             int randomNum = randomGenerator.nextInt(100);
             if (randomNum > 25 && randomNum <=50) {
                 game.computer.getListaPersonagens().get(target).defender();
                 som.playSound("Hit_Def");
+                //
+                logPlayer += "Sombra " + target + " defendeu!";
             } else {
                 som.playSound("Hit");
+                //
+                logPlayer += "Usuario " + playerPer + " acertou Sombra " + target + "!";
             }
+            
+            logPlayer += " Dano: " + game.atacarPersonagem(playerPer, target);
             //
-            game.atacarPersonagem(playerPer, target);
             if (game.computer.getListaPersonagens().get(target).getQuantidadeVida() == 0) { 
                     game.removerMortoComputer(target);
                     if(computerPer != 0){
                         computerPer--;
                     }
+                    logPlayer += " O atacado morreu.";
             }
             option = 0;
             target = -1;
             nextTurn();
                 
         } else if(turn == 0 && option == 2 && target != -1) {
+            logPlayer = "Player: ";
             if(game.player.getListaPersonagens().get(playerPer) instanceof Body) {
                 som.playSound("Buff");
                 game.conjurarPersonagem(playerPer);
+                
+                logPlayer += "O dano do heroi " + playerPer + " foi aumentado!";
                 target = -1;
             } else {
                 som.playSound("Heal");
-                game.curarPersonagem(playerPer, target);
+                
+                logPlayer += "O heroi " + target + " foi curado: " + game.curarPersonagem(playerPer, target);
                 target = -1;
                     
             }
@@ -321,6 +338,7 @@ public class FightMenu extends State {
         } else if(turn == 1) { 
             option = randomGenerator.nextInt(2);
             if(option == 1) {
+                logComputer = "Computer: ";
                 //Botar a IA aqui - definir target
                 int menor = 0;
                 for(int i = 0; i < game.player.getListaPersonagens().size(); i++){
@@ -333,23 +351,30 @@ public class FightMenu extends State {
                 if (randomNum > 25 && randomNum <=50) {
                     game.player.getListaPersonagens().get(menor).defender();
                     som.playSound("Hit_Def");
+                    logComputer += "Heroi " + menor + " Defendeu!";
+                } else {
                     som.playSound("Hit");
+                    logComputer += "Sombra " + computerPer + " acertou Heroi " + menor + "!";
                 }
                 //
-                game.atacarPersonagemComputer(computerPer, menor);
+                logComputer += " Dano: " + game.atacarPersonagemComputer(computerPer, menor);
                 if (game.player.getListaPersonagens().get(menor).getQuantidadeVida() == 0) {
                     game.removerMortoPlayer(menor);
                     if(playerPer != 0) {
                         playerPer--;
                     }
+                    logComputer += "O heroi " + menor + " do usuario morreu.";
                 }
                 option = 0;
                 nextTurn();
                 
             } else if(turn == 1 && option == 2) {
+                logComputer = "Computer: ";
                 if(game.computer.getListaPersonagens().get(computerPer) instanceof Body) {
                     som.playSound("Buff");
                     game.conjurarPersonagemComputer(computerPer);
+                    
+                    logComputer += "O dano da Sombra " + computerPer + " foi aumentado.";
                 } else {
                     //Botar a IA aqui
                     int menor = 0;
@@ -361,13 +386,19 @@ public class FightMenu extends State {
                 }
                     //
                     som.playSound("Heal");
-                    game.curarPersonagemComputer(computerPer, menor);
+                    logComputer +=  "A Sombra " + menor + " foi curada: " + game.curarPersonagemComputer(computerPer, menor);
                     
                 }
                 option = 0;
                 nextTurn();
             }
         }
+        
+                
+        //Imprimindo 
+        g.drawString(logPlayer, 280, 450);
+        g.drawString(logComputer, 280, 490);
+        
         //Atualizacao
         super.render();
     }
