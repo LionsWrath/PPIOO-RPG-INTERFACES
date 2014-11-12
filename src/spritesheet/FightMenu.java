@@ -168,6 +168,15 @@ public class FightMenu extends State {
         }
     }
     
+    public void verificar() {
+        if(playerPer >= game.player.getListaPersonagens().size()-1) {
+            playerPer = game.player.getListaPersonagens().size()-1; 
+        }
+        if (computerPer >= game.computer.getListaPersonagens().size()-1) {
+            computerPer = game.computer.getListaPersonagens().size()-1; 
+        }
+    }
+    
     @Override
     public void render() {
         g = getGraphics2D();
@@ -273,7 +282,7 @@ public class FightMenu extends State {
         //} else {
             g.fillArc(770, computerPer*30 + 50, 15, 15, 315, 90);
         //}
-        
+        verificar();
         //realiazador de ataques
         if(turn == 0 && option == 1 && target != -1) {
             //Verificar defesa
@@ -372,8 +381,7 @@ public class FightMenu extends State {
             frame.update(g);
         }
         
-        if((inputManager.isMouseClicked("LeftClick") || inputManager.isKeyPressed("a") || inputManager.isKeyPressed("s")) || inputManager.isKeyPressed("d") 
-                && turn == 0) {
+        if(inputManager.isMouseClicked("LeftClick") || inputManager.isKeyPressed("a") && turn == 0) {
             switch (option) {
                 case 0:
                     if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
@@ -382,7 +390,7 @@ public class FightMenu extends State {
                         som.playSound("Choose");
                 
                     } else if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) || inputManager.isKeyPressed("d")) {
+                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510))) {
                             option = 2;
                         if(game.player.getListaPersonagens().get(playerPer) instanceof Body) {
                             target = 0;
@@ -394,12 +402,12 @@ public class FightMenu extends State {
                 case 1:
                         //Volta botao
                     if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460)) || inputManager.isKeyPressed("s")) {
+                            && (inputManager.MOUSE.y >= 430 && inputManager.MOUSE.y <= 460))) {
                         som.playSound("Select");
                         option = 0;
                     } else {
                         //Seleciona o alvo
-                        for(int i = 0; i < game.player.getListaPersonagens().size(); i++) {
+                        for(int i = 0; i < game.computer.getListaPersonagens().size(); i++) {
                             if ((inputManager.MOUSE.x >= 760 && inputManager.MOUSE.x <= 775) 
                             && (inputManager.MOUSE.y >= (i*30 + 40) && inputManager.MOUSE.y <= (i*30 + 75))) {
                                 System.out.println("" + i);
@@ -411,7 +419,7 @@ public class FightMenu extends State {
                 case 2:
                         //Volta botao
                     if(((inputManager.MOUSE.x >= 80 && inputManager.MOUSE.x <= 200) 
-                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510)) || inputManager.isKeyPressed("s")) {
+                            && (inputManager.MOUSE.y >= 480 && inputManager.MOUSE.y <= 510))) {
                         som.playSound("Select");
                         option = 0;
                     } else {
@@ -420,6 +428,7 @@ public class FightMenu extends State {
                             if ((inputManager.MOUSE.x >= 180 && inputManager.MOUSE.x <= 195) 
                                     && (inputManager.MOUSE.y >= (i*30 + 40) && inputManager.MOUSE.y <= (i*30 + 75))) {
                                 //Verificar vida cheia e mesmo personagem
+                                System.out.println("" + i);
                                 if(playerPer != i) {
                                     target = i;
                                 } else {
@@ -429,7 +438,7 @@ public class FightMenu extends State {
                         }
                     }
                     break;
-            } 
+            }
         } 
     }
 }
